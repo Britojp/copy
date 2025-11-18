@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listBrandProfiles, deleteBrandProfile } from '../../services/brand';
 import { type BrandProfile } from '../../types/brand';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import BrandProfileForm from './components/BrandProfileForm';
 
 export default function BrandProfilesPage() {
+  const navigate = useNavigate();
   const [profiles, setProfiles] = useState<BrandProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [editingProfile, setEditingProfile] = useState<BrandProfile | null>(null);
 
   const loadProfiles = async () => {
     setLoading(true);
@@ -43,21 +42,14 @@ export default function BrandProfilesPage() {
   };
 
   const handleEdit = (profile: BrandProfile) => {
-    setEditingProfile(profile);
-    setShowForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingProfile(null);
-    loadProfiles();
+    navigate(`/brand-profiles/edit/${profile.id}`);
   };
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 lg:px-8 lg:pb-8 lg:pt-0">
       <div className="w-full space-y-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto">Criar Perfil</Button>
+          <Button onClick={() => navigate('/brand-profiles/create')} className="w-full sm:w-auto">Criar Perfil</Button>
         </div>
 
         {error && (
@@ -65,8 +57,6 @@ export default function BrandProfilesPage() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-
-        {showForm && <BrandProfileForm profile={editingProfile} onClose={handleCloseForm} />}
 
         {loading ? (
           <div className="text-center py-12">Carregando perfis...</div>

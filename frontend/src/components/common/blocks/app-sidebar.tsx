@@ -6,26 +6,53 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   type LucideIcon
 } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
 
-interface Route {
+interface SubRoute {
   path: string
   label: string
+}
+
+interface Route {
+  path?: string
+  label: string
   icon: LucideIcon
+  subRoutes?: SubRoute[]
 }
 
 const routes: Route[] = [
   {
-    path: "/",
-    label: "Pipeline de Agentes.",
-    icon: Workflow
+    label: "Agentes.",
+    icon: Workflow,
+    subRoutes: [
+      {
+        path: "/",
+        label: "Seletor de Datas."
+      },
+      {
+        path: "/agent-pipeline",
+        label: "Pipeline de Agentes."
+      }
+    ]
   },
   {
-    path: "/brand-profiles",
     label: "Perfis de Marca.",
-    icon: Building2
+    icon: Building2,
+    subRoutes: [
+      {
+        path: "/brand-profiles",
+        label: "Consultar."
+      },
+      {
+        path: "/brand-profiles/create",
+        label: "Criar."
+      }
+    ]
   }
 ]
 
@@ -38,11 +65,47 @@ interface AppSidebarProps {
 export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: AppSidebarProps) {
   const navigate = useNavigate()
   const location = useLocation()
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['Agentes.', 'Perfis de Marca.']))
 
   const handleNavigate = (path: string) => {
     navigate(path)
     onNavigate?.()
   }
+
+  const toggleExpand = (label: string) => {
+    setExpandedItems((prev) => {
+      const next = new Set(prev)
+      if (next.has(label)) {
+        next.delete(label)
+      } else {
+        next.add(label)
+      }
+      return next
+    })
+  }
+
+  const isItemExpanded = (label: string) => expandedItems.has(label)
+
+  const isSubRouteActive = (subRoutes?: SubRoute[]) => {
+    if (!subRoutes) return false
+    return subRoutes.some((subRoute) => location.pathname === subRoute.path)
+  }
+
+  useEffect(() => {
+    routes.forEach((route) => {
+      if (route.subRoutes) {
+        const hasActiveSubRoute = route.subRoutes.some((subRoute) => location.pathname === subRoute.path)
+        if (hasActiveSubRoute) {
+          setExpandedItems((prev) => {
+            if (!prev.has(route.label)) {
+              return new Set([...prev, route.label])
+            }
+            return prev
+          })
+        }
+      }
+    })
+  }, [location.pathname])
 
   const isCollapsed = collapsed
 
@@ -68,16 +131,85 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
         <nav className={`space-y-1 ${isCollapsed ? 'lg:px-2 px-4' : 'px-4'}`}>
           {routes.map((route) => {
             const IconComponent = route.icon
-            const isActive = location.pathname === route.path
+            const hasSubRoutes = route.subRoutes && route.subRoutes.length > 0
+            const isExpanded = isItemExpanded(route.label)
+            const isActive = route.path ? location.pathname === route.path : isSubRouteActive(route.subRoutes)
+            
+            if (hasSubRoutes) {
+              return (
+                <div 
+                  key={route.label} 
+                  className={`space-y-1 rounded-lg ${isActive ? 'bg-primary/10' : ''}`}
+                >
+                  <button
+                    onClick={() => !isCollapsed && toggleExpand(route.label)}
+                    className={`
+                      flex items-center relative rounded-lg w-full
+                      ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-3' : 'gap-3 px-3 py-3'}
+                      ${isActive 
+                        ? 'text-foreground' 
+                        : 'text-foreground hover:bg-muted/50'
+                      }
+                    `}
+                    title={isCollapsed ? route.label : undefined}
+                  >
+                    <IconComponent 
+                      size={20} 
+                      className={`flex-shrink-0 ${!isActive ? 'text-muted-foreground' : ''}`} 
+                    />
+                    {!isCollapsed && (
+                      <>
+                        <span className="text-sm overflow-hidden whitespace-nowrap flex-1 text-left">
+                          {route.label}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp size={16} className="flex-shrink-0 text-muted-foreground" />
+                        ) : (
+                          <ChevronDown size={16} className="flex-shrink-0 text-muted-foreground" />
+                        )}
+                      </>
+                    )}
+                    {isCollapsed && (
+                      <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
+                        {route.label}
+                      </span>
+                    )}
+                  </button>
+                  {!isCollapsed && isExpanded && route.subRoutes && (
+                    <div className="ml-8 space-y-1 pb-1">
+                      {route.subRoutes.map((subRoute) => {
+                        const isSubActive = location.pathname === subRoute.path
+                        return (
+                          <button
+                            key={subRoute.path}
+                            onClick={() => handleNavigate(subRoute.path)}
+                            className={`
+                              flex items-center w-full rounded-lg px-3 py-2 text-sm
+                              ${isSubActive 
+                                ? 'text-foreground font-medium' 
+                                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                              }
+                            `}
+                          >
+                            {subRoute.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
             return (
               <button
                 key={route.path}
-                onClick={() => handleNavigate(route.path)}
+                onClick={() => route.path && handleNavigate(route.path)}
                 className={`
                   flex items-center relative rounded-lg
                   ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-3' : 'gap-3 px-3 py-3'}
                   ${isActive 
-                    ? 'w-full' 
+                    ? 'w-full bg-primary/10 text-foreground' 
                     : 'w-full text-foreground hover:bg-muted/50 rounded-lg'
                   }
                 `}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import AgentPipelinePage from './pages/AgentPipeline'
 import BrandProfilesPage from './pages/BrandProfiles/BrandProfiles'
+import CreateBrandProfilePage from './pages/BrandProfiles/CreateBrandProfile'
 import { Route, Routes } from 'react-router-dom'
 import { AppSidebar } from './components/common/blocks/app-sidebar'
 import { Menu, X } from 'lucide-react'
@@ -58,7 +59,9 @@ function App() {
       }`}>
         <Routes>
           <Route path="/" element={<AgentPipelinePage />} />
+          <Route path="/agent-pipeline" element={<AgentPipelinePage />} />
           <Route path="/brand-profiles" element={<BrandProfilesPage />} />
+          <Route path="/brand-profiles/create" element={<CreateBrandProfilePage />} />
         </Routes>
       </main>
     </div>

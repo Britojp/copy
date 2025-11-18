@@ -263,7 +263,7 @@ export default function AgentPipelinePage() {
           </div>
         </div>
         {error && (
-          <div className="mt-4 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm">
+          <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm">
             <div className="font-medium">Erro</div>
             <div className="text-destructive-foreground/90">{error}</div>
           </div>
@@ -277,14 +277,14 @@ export default function AgentPipelinePage() {
           ) : (
             <div className="flex flex-col gap-2">
               {history.map((h) => (
-                <div key={h.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-md border p-2 text-xs">
+                <div key={h.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-md p-2 text-xs">
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="font-medium truncate">{h.nicho}</span>
                     <span className="text-muted-foreground">{h.startDate || '—'} → {h.endDate || '—'}</span>
                     {h.correlationId ? <span className="text-muted-foreground break-all sm:break-normal">corr: {h.correlationId}</span> : null}
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
-                    <button onClick={() => restoreHistory(h)} className="rounded-md border px-2 py-1 hover:bg-muted whitespace-nowrap">Restaurar</button>
+                    <button onClick={() => restoreHistory(h)} className="rounded-md px-2 py-1 hover:bg-muted whitespace-nowrap">Restaurar</button>
                   </div>
                 </div>
               ))}
@@ -298,7 +298,7 @@ export default function AgentPipelinePage() {
           ) : (
             <div className="flex flex-col gap-3">
               {datasList.map((it, idx) => (
-                <div key={idx} className="rounded-md border p-3">
+                <div key={idx} className="rounded-md p-3">
                   <div className="mb-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="text-sm font-medium break-words">{it?.nome ?? 'Evento'}</div>
                     <div className="flex gap-2 flex-wrap">
@@ -333,7 +333,7 @@ export default function AgentPipelinePage() {
             {infoList.length === 0 ? <div className="text-sm text-muted-foreground">Sem informações</div> : (
               <div className="flex flex-col gap-3">
                 {infoList.map((it, idx) => (
-                  <div key={idx} className="rounded-md border p-3">
+                  <div key={idx} className="rounded-md p-3">
                     <div className="mb-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="text-sm font-medium break-words">{it?.nome ?? 'Item'}</div>
                       <div className="text-xs text-muted-foreground flex-shrink-0">{it?.data ?? '—'}</div>
@@ -361,7 +361,7 @@ export default function AgentPipelinePage() {
             {descList.length === 0 ? <div className="text-sm text-muted-foreground">Sem descrições</div> : (
               <div className="flex flex-col gap-3">
                 {descList.map((it, idx) => (
-                  <div key={idx} className="rounded-md border p-3">
+                  <div key={idx} className="rounded-md p-3">
                     <div className="mb-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="text-sm font-medium break-words">{it?.nome ?? 'Item'}</div>
                       <div className="text-xs text-muted-foreground flex-shrink-0">{it?.data ?? '—'}</div>
@@ -369,7 +369,7 @@ export default function AgentPipelinePage() {
                     {Array.isArray(it?.variacoes) && it.variacoes.length > 0 ? (
                       <div className="flex flex-col gap-3 mt-2">
                         {it.variacoes.map((v: any, vIdx: number) => (
-                          <div key={vIdx} className="rounded border-l-4 border-primary/30 bg-secondary/10 p-2">
+                          <div key={vIdx} className="rounded-l-4-primary/30 bg-secondary/10 p-2">
                             <div className="mb-1 text-xs text-primary" style={{ fontFamily: 'var(--font-logo)' }}>{v?.tamanho ? v.tamanho.toUpperCase() : 'VARIAÇÃO'}</div>
                             <div className="mb-2 text-sm">{v?.descricaoPost ?? ''}</div>
                             <div className="mb-2 text-xs font-medium">CTA: {v?.cta ?? '—'}</div>
@@ -407,7 +407,7 @@ export default function AgentPipelinePage() {
             {promptList.length === 0 ? <div className="text-sm text-muted-foreground">Sem prompts</div> : (
               <div className="flex flex-col gap-3">
                 {promptList.map((it, idx) => (
-                  <div key={idx} className="rounded-md border p-3">
+                  <div key={idx} className="rounded-md p-3">
                     <div className="mb-1 text-sm font-medium break-words">{it?.nome ?? 'Item'}</div>
                     <div className="mb-2 text-xs text-muted-foreground">{it?.data ?? '—'}</div>
                     <div className="mb-2 text-xs"><span className="font-medium">Tema:</span> {it?.tema ?? '—'}</div>
@@ -420,10 +420,10 @@ export default function AgentPipelinePage() {
                     <div className="mb-2 text-xs"><span className="font-medium">Estilo:</span> {it?.estilo ?? '—'}</div>
                     <div className="mb-1 text-xs font-medium">Prompts</div>
                     <div className="grid gap-2 text-xs grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {it?.promptBase ? <div className="rounded-md border p-2"><div className="mb-1 font-medium">Base</div><div className="whitespace-pre-wrap break-words">{it.promptBase}</div></div> : null}
-                      {it?.promptMidjourney ? <div className="rounded-md border p-2"><div className="mb-1 font-medium">Midjourney</div><div className="whitespace-pre-wrap break-words">{it.promptMidjourney}</div></div> : null}
-                      {it?.promptStableDiffusion ? <div className="rounded-md border p-2"><div className="mb-1 font-medium">Stable Diffusion</div><div className="whitespace-pre-wrap break-words">{it.promptStableDiffusion}</div></div> : null}
-                      {it?.promptDalle ? <div className="rounded-md border p-2"><div className="mb-1 font-medium">DALL·E</div><div className="whitespace-pre-wrap break-words">{it.promptDalle}</div></div> : null}
+                      {it?.promptBase ? <div className="rounded-md p-2"><div className="mb-1 font-medium">Base</div><div className="whitespace-pre-wrap break-words">{it.promptBase}</div></div> : null}
+                      {it?.promptMidjourney ? <div className="rounded-md p-2"><div className="mb-1 font-medium">Midjourney</div><div className="whitespace-pre-wrap break-words">{it.promptMidjourney}</div></div> : null}
+                      {it?.promptStableDiffusion ? <div className="rounded-md p-2"><div className="mb-1 font-medium">Stable Diffusion</div><div className="whitespace-pre-wrap break-words">{it.promptStableDiffusion}</div></div> : null}
+                      {it?.promptDalle ? <div className="rounded-md p-2"><div className="mb-1 font-medium">DALL·E</div><div className="whitespace-pre-wrap break-words">{it.promptDalle}</div></div> : null}
                     </div>
                   </div>
                 ))}
