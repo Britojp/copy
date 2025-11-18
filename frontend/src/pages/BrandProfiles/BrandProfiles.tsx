@@ -54,7 +54,7 @@ export default function BrandProfilesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 lg:px-8 lg:pb-8 lg:pt-0">
       <div className="w-full space-y-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto">Criar Perfil</Button>

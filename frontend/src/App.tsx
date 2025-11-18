@@ -29,18 +29,19 @@ function App() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[55] lg:hidden"
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[50] lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
         className={`
-          fixed left-4 top-4 bottom-4 z-[50]
+          fixed left-0 top-0 bottom-0 z-[55]
           transition-all duration-300 ease-in-out
-          ${sidebarCollapsed ? 'w-16' : 'w-64'}
+          ${sidebarCollapsed ? 'lg:w-16 w-64' : 'w-64'}
+          lg:left-4 lg:top-4 lg:bottom-4
           lg:translate-x-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         <AppSidebar 
@@ -52,8 +53,8 @@ function App() {
 
       <main className={`min-h-screen bg-background transition-all duration-300 ${
         sidebarCollapsed 
-          ? 'lg:ml-[calc(4rem+1rem)]' 
-          : 'lg:ml-[calc(16rem+1rem)]'
+          ? 'lg:ml-[calc(4rem+1rem)] lg:pt-4' 
+          : 'lg:ml-[calc(16rem+1rem)] lg:pt-4'
       }`}>
         <Routes>
           <Route path="/" element={<AgentPipelinePage />} />

@@ -44,26 +44,28 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
     onNavigate?.()
   }
 
+  const isCollapsed = collapsed
+
   return (
     <div
-      className="flex flex-col h-full bg-card rounded-lg shadow-sm relative"
+      className="flex flex-col h-full bg-card shadow-sm relative rounded-none lg:rounded-lg"
     >
-      <div className={`${collapsed ? 'p-2' : 'p-6 pb-4'}`}>
+      <div className={`${isCollapsed ? 'lg:p-2 p-6 pb-4' : 'p-6 pb-4'}`}>
         <div className="space-y-4">
           <div className="flex items-center justify-center relative">
-            {!collapsed && (
+            {!isCollapsed && (
               <span className="text-lg text-foreground" style={{ fontFamily: 'var(--font-logo)' }}>copy.</span>
             )}
-            {collapsed && (
-              <span className="text-lg text-foreground" style={{ fontFamily: 'var(--font-logo)' }}>c.</span>
+            {isCollapsed && (
+              <span className="text-lg text-foreground lg:block hidden" style={{ fontFamily: 'var(--font-logo)' }}>c.</span>
             )}
           </div>
         </div>
-        {!collapsed && <div className="mt-4 mx-4"></div>}
+        {!isCollapsed && <div className="mt-4 mx-4"></div>}
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <nav className={`space-y-1 ${collapsed ? 'px-2' : 'px-4'}`}>
+        <nav className={`space-y-1 ${isCollapsed ? 'lg:px-2 px-4' : 'px-4'}`}>
           {routes.map((route) => {
             const IconComponent = route.icon
             const isActive = location.pathname === route.path
@@ -73,20 +75,25 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
                 onClick={() => handleNavigate(route.path)}
                 className={`
                   flex items-center relative rounded-lg
-                  ${collapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-3'}
+                  ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-3' : 'gap-3 px-3 py-3'}
                   ${isActive 
                     ? 'w-full' 
                     : 'w-full text-foreground hover:bg-muted/50 rounded-lg'
                   }
                 `}
-                title={collapsed ? route.label : undefined}
+                title={isCollapsed ? route.label : undefined}
               >
                 <IconComponent 
                   size={20} 
                   className={`flex-shrink-0 ${!isActive ? 'text-muted-foreground' : ''}`} 
                 />
-                {!collapsed && (
+                {!isCollapsed && (
                   <span className="text-sm overflow-hidden whitespace-nowrap">
+                    {route.label}
+                  </span>
+                )}
+                {isCollapsed && (
+                  <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
                     {route.label}
                   </span>
                 )}
@@ -96,8 +103,8 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
         </nav>
       </div>
 
-      <div className={`space-y-1 ${collapsed ? 'p-2' : 'p-4'}`}>
-  {!collapsed && (
+      <div className={`space-y-1 ${isCollapsed ? 'lg:p-2 p-4' : 'p-4'}`}>
+  {!isCollapsed && (
     <div className="px-3 py-2 mb-2">
       <div className="flex items-center gap-2">
         <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
@@ -115,8 +122,8 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
     </div>
   )}
 
-        {collapsed && (
-          <div className="px-2 py-2 mb-2 flex justify-center">
+        {isCollapsed && (
+          <div className="lg:px-2 lg:py-2 lg:mb-2 lg:flex lg:justify-center hidden">
             <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
               <User size={18} className="text-muted-foreground" />
             </div>
@@ -124,26 +131,36 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
         )}
         <button 
           className={`flex items-center w-full transition-colors text-foreground hover:bg-muted rounded-lg ${
-            collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
+            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-2.5' : 'gap-3 px-3 py-2.5'
           }`}
-          title={collapsed ? 'Configurações' : undefined}
+          title={isCollapsed ? 'Configurações' : undefined}
         >
           <Settings size={20} className="flex-shrink-0 text-muted-foreground" />
-          {!collapsed && (
+          {!isCollapsed && (
             <span className="text-sm overflow-hidden whitespace-nowrap">
+              Configurações
+            </span>
+          )}
+          {isCollapsed && (
+            <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
               Configurações
             </span>
           )}
         </button>
         <button 
           className={`flex items-center w-full transition-colors text-destructive hover:bg-muted rounded-lg ${
-            collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
+            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-2.5' : 'gap-3 px-3 py-2.5'
           }`}
-          title={collapsed ? 'Sair' : undefined}
+          title={isCollapsed ? 'Sair' : undefined}
         >
           <LogOut size={20} className="flex-shrink-0" />
-          {!collapsed && (
+          {!isCollapsed && (
             <span className="text-sm overflow-hidden whitespace-nowrap">
+              Sair
+            </span>
+          )}
+          {isCollapsed && (
+            <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
               Sair
             </span>
           )}
@@ -152,11 +169,11 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
           <button
             onClick={onToggleCollapse}
             className={`hidden lg:flex items-center w-full transition-colors text-foreground hover:bg-muted rounded-lg mt-2 ${
-              collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
+              isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
             }`}
-            title={collapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
+            title={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
           >
-            {collapsed ? (
+            {isCollapsed ? (
               <ChevronRight size={20} className="flex-shrink-0 text-muted-foreground" />
             ) : (
               <>

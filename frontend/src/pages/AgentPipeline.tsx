@@ -198,7 +198,7 @@ export default function AgentPipelinePage() {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8">
+    <div className="w-full p-4 sm:p-6 lg:px-8 lg:pb-8 lg:pt-0">
       <div>
         {correlationId ? <div className="mt-1 text-xs text-muted-foreground break-all sm:break-normal">correlationId: {correlationId}</div> : null}
       </div>
@@ -329,7 +329,7 @@ export default function AgentPipelinePage() {
         </StepCard>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          <StepCard index={2} title="Buscador de Informações" runId={run2} loading={loading && dataOut && !infoOut} emptyText="Aguarde selecionar uma data">
+          <StepCard index={2} title="Buscador de Informações" runId={run2} loading={Boolean(loading && dataOut && !infoOut)} emptyText="Aguarde selecionar uma data">
             {infoList.length === 0 ? <div className="text-sm text-muted-foreground">Sem informações</div> : (
               <div className="flex flex-col gap-3">
                 {infoList.map((it, idx) => (
@@ -357,7 +357,7 @@ export default function AgentPipelinePage() {
             )}
           </StepCard>
 
-          <StepCard index={3} title="Escritor de Descrição" runId={run3} loading={loading && infoOut && !descOut} emptyText="Aguarde selecionar uma data">
+          <StepCard index={3} title="Escritor de Descrição" runId={run3} loading={Boolean(loading && infoOut && !descOut)} emptyText="Aguarde selecionar uma data">
             {descList.length === 0 ? <div className="text-sm text-muted-foreground">Sem descrições</div> : (
               <div className="flex flex-col gap-3">
                 {descList.map((it, idx) => (
@@ -403,7 +403,7 @@ export default function AgentPipelinePage() {
             )}
           </StepCard>
 
-          <StepCard index={4} title="Gerador de Prompt de Imagem" runId={run4} loading={loading && descOut && !imgPromptOut} emptyText="Aguarde selecionar uma data">
+          <StepCard index={4} title="Gerador de Prompt de Imagem" runId={run4} loading={Boolean(loading && descOut && !imgPromptOut)} emptyText="Aguarde selecionar uma data">
             {promptList.length === 0 ? <div className="text-sm text-muted-foreground">Sem prompts</div> : (
               <div className="flex flex-col gap-3">
                 {promptList.map((it, idx) => (
