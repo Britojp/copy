@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Section } from '../../../components/common/Section';
 import { Badge } from '../../../components/common/Badge';
+import { extractArrayFromObject } from '../../../lib/format';
 
 type EtapaGeradorPromptProps = {
   descOut: unknown;
@@ -10,17 +11,13 @@ type EtapaGeradorPromptProps = {
 };
 
 export function EtapaGeradorPrompt({
-  descOut,
+  descOut: _descOut,
   imgPromptOut,
   loading,
   onBack,
 }: EtapaGeradorPromptProps) {
   const promptList = useMemo(() => {
-    if (imgPromptOut && typeof imgPromptOut === 'object' && 'itens' in (imgPromptOut as any)) {
-      const arr = (imgPromptOut as any).itens;
-      if (Array.isArray(arr)) return arr as Array<any>;
-    }
-    return [] as Array<any>;
+    return extractArrayFromObject(imgPromptOut, 'itens') as Array<Record<string, unknown> & { nome?: string; data?: string; tema?: string; elementos?: string[]; composicao?: string; estilo?: string; promptBase?: string; promptMidjourney?: string; promptStableDiffusion?: string; promptDalle?: string }>;
   }, [imgPromptOut]);
 
   const hasData = promptList.length > 0;

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Section } from '../../../components/common/Section';
 import { Badge } from '../../../components/common/Badge';
+import { extractArrayFromObject } from '../../../lib/format';
 
 type EtapaEscritorDescricaoProps = {
   infoOut: unknown;
@@ -13,7 +14,7 @@ type EtapaEscritorDescricaoProps = {
 };
 
 export function EtapaEscritorDescricao({
-  infoOut,
+  infoOut: _infoOut,
   descOut,
   loading,
   onBack,
@@ -21,11 +22,7 @@ export function EtapaEscritorDescricao({
   canAdvance = false,
 }: EtapaEscritorDescricaoProps) {
   const descList = useMemo(() => {
-    if (descOut && typeof descOut === 'object' && 'itens' in (descOut as any)) {
-      const arr = (descOut as any).itens;
-      if (Array.isArray(arr)) return arr as Array<any>;
-    }
-    return [] as Array<any>;
+    return extractArrayFromObject(descOut, 'itens') as Array<Record<string, unknown> & { nome?: string; data?: string; variacoes?: Array<unknown>; descricaoPost?: string; cta?: string; hashtags?: string[]; palavrasChave?: string[] }>;
   }, [descOut]);
 
   const hasData = descList.length > 0;

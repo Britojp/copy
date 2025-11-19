@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Badge } from '../../../components/common/Badge';
 import { Card } from '../../../components/common/Card';
 import { Check, X } from 'lucide-react';
+import { extractArrayFromObject, toggleSetItem } from '../../../lib/format';
 
 type EtapaResultadosProps = {
   descOut: unknown;
@@ -20,19 +21,11 @@ export function EtapaResultados({
   const [approvedPrompts, setApprovedPrompts] = useState<Set<number>>(new Set());
 
   const descList = useMemo(() => {
-    if (descOut && typeof descOut === 'object' && 'itens' in (descOut as any)) {
-      const arr = (descOut as any).itens;
-      if (Array.isArray(arr)) return arr as Array<any>;
-    }
-    return [] as Array<any>;
+    return extractArrayFromObject(descOut, 'itens') as Array<Record<string, unknown> & { nome?: string; data?: string; variacoes?: Array<unknown>; descricaoPost?: string; cta?: string; hashtags?: string[]; palavrasChave?: string[] }>;
   }, [descOut]);
 
   const promptList = useMemo(() => {
-    if (imgPromptOut && typeof imgPromptOut === 'object' && 'itens' in (imgPromptOut as any)) {
-      const arr = (imgPromptOut as any).itens;
-      if (Array.isArray(arr)) return arr as Array<any>;
-    }
-    return [] as Array<any>;
+    return extractArrayFromObject(imgPromptOut, 'itens') as Array<Record<string, unknown> & { nome?: string; data?: string; tema?: string; elementos?: string[]; composicao?: string; estilo?: string; promptBase?: string; promptMidjourney?: string; promptStableDiffusion?: string; promptDalle?: string }>;
   }, [imgPromptOut]);
 
   const hasDescData = descList.length > 0;
@@ -42,27 +35,11 @@ export function EtapaResultados({
   const isCompleted = hasDescData && hasPromptData;
 
   const toggleDescApproval = (idx: number) => {
-    setApprovedDescs((prev) => {
-      const next = new Set(prev);
-      if (next.has(idx)) {
-        next.delete(idx);
-      } else {
-        next.add(idx);
-      }
-      return next;
-    });
+    setApprovedDescs((prev) => toggleSetItem(prev, idx));
   };
 
   const togglePromptApproval = (idx: number) => {
-    setApprovedPrompts((prev) => {
-      const next = new Set(prev);
-      if (next.has(idx)) {
-        next.delete(idx);
-      } else {
-        next.add(idx);
-      }
-      return next;
-    });
+    setApprovedPrompts((prev) => toggleSetItem(prev, idx));
   };
 
   return (
@@ -180,7 +157,7 @@ export function EtapaResultados({
                           </div>
                         )}
                         
-                        {vIdx < it.variacoes.length - 1 && (
+                        {it.variacoes && vIdx < it.variacoes.length - 1 && (
                           <div className="border-t border-muted/30 pt-4"></div>
                         )}
                       </div>

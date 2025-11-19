@@ -6,6 +6,7 @@ import { type Tone } from '../../../types/common/ai';
 import { Section } from '../../../components/common/Section';
 import { Field } from '../../../components/common/Field';
 import { Card } from '../../../components/common/Card';
+import { formatDateBR } from '../../../lib/format';
 
 type HistoryItem = {
   id: string;
@@ -62,19 +63,6 @@ export function EtapaParametros({
       .then((profiles) => setBrandProfiles(profiles))
       .catch((err) => console.error('Erro ao carregar perfis:', err));
   }, []);
-
-  const formatDateBR = (dateStr: string) => {
-    if (!dateStr || dateStr === '—') return '—';
-    try {
-      const [year, month, day] = dateStr.split('-');
-      if (year && month && day) {
-        return `${day}/${month}/${year}`;
-      }
-      return dateStr;
-    } catch {
-      return dateStr;
-    }
-  };
 
   const canProceed = nicho.trim() !== '';
 

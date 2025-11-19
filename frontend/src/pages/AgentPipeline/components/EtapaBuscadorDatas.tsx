@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import { Badge } from '../../../components/common/Badge';
 import { Card } from '../../../components/common/Card';
 import { CalendarView } from './CalendarView';
+import { capitalizeFirstLetter, extractArrayFromObject } from '../../../lib/format';
 
 type EtapaBuscadorDatasProps = {
   dataOut: unknown;
@@ -26,21 +27,15 @@ export function EtapaBuscadorDatas({
   endDate,
 }: EtapaBuscadorDatasProps) {
   const datasList = useMemo(() => {
-    if (dataOut && typeof dataOut === 'object' && 'datas' in (dataOut as any)) {
-      const arr = (dataOut as any).datas;
-      if (Array.isArray(arr)) return arr as Array<any>;
-    }
-    return [] as Array<any>;
+    return extractArrayFromObject(dataOut, 'datas') as Array<Record<string, unknown> & { data?: string; nome?: string; relevancia?: string; recorrencia?: string; descricao?: string; tags?: string[] }>;
   }, [dataOut]);
 
   const eventsWithoutDate = useMemo(() => {
-    return datasList.filter((it) => !it?.data || it.data === '' || it.data === null || it.data === undefined);
+    return datasList.filter((it) => {
+      const data = it?.data;
+      return !data || data === '' || data === null || data === undefined;
+    });
   }, [datasList]);
-
-  const capitalizeFirstLetter = (str: string) => {
-    if (!str) return str;
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  };
 
   const hasData = datasList.length > 0;
   const hasEventsWithoutDate = eventsWithoutDate.length > 0;
@@ -84,7 +79,7 @@ export function EtapaBuscadorDatas({
             <CalendarView
               startDate={startDate || ''}
               endDate={endDate || ''}
-              events={datasList}
+              events={datasList as Array<{ data?: string; nome?: string; [key: string]: unknown }>}
               onDateClick={onSelectDate}
             />
           </Card>
