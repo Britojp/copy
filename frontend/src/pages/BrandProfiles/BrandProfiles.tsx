@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { listBrandProfiles, deleteBrandProfile } from '../../services/brand';
 import { type BrandProfile } from '../../types/brand';
 import { Button } from '../../components/ui/button';
-import { Card } from '../../components/ui/card';
+import { Card } from '../../components/common/Card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 
 export default function BrandProfilesPage() {
@@ -46,10 +46,10 @@ export default function BrandProfilesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:px-8 lg:pb-8 lg:pt-0">
-      <div className="w-full space-y-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <Button onClick={() => navigate('/brand-profiles/create')} className="w-full sm:w-auto">Criar Perfil</Button>
+    <div className="min-h-screen bg-background p-3 sm:p-4 lg:px-6 lg:pb-6 lg:pt-0">
+      <div className="w-full space-y-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+          <Button onClick={() => navigate('/brand-profiles/create')} size="sm" className="w-full sm:w-auto">Criar Perfil</Button>
         </div>
 
         {error && (
@@ -59,25 +59,25 @@ export default function BrandProfilesPage() {
         )}
 
         {loading ? (
-          <div className="text-center py-12">Carregando perfis...</div>
+          <div className="text-center py-8 text-xs">Carregando perfis...</div>
         ) : profiles.length === 0 ? (
-          <Card className="p-6 sm:p-12 text-center text-muted-foreground">
+          <Card padding="lg" className="text-center text-xs text-muted-foreground">
             Nenhum perfil de marca cadastrado. Crie um novo perfil para começar.
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
             {profiles.map((profile) => (
-              <Card key={profile.id} className="p-6 space-y-4">
+              <Card key={profile.id} className="space-y-3">
                 <div>
-                  <h3 className="text-xl" style={{ fontFamily: 'var(--font-logo)' }}>{profile.nome}</h3>
-                  <p className="text-sm text-muted-foreground">{profile.setor}</p>
+                  <h3 className="text-sm" style={{ fontFamily: 'var(--font-logo)' }}>{profile.nome}</h3>
+                  <p className="text-xs text-muted-foreground">{profile.setor}</p>
                 </div>
                 {profile.valores && profile.valores.length > 0 && (
                   <div>
-                    <h4 className="text-sm mb-2" style={{ fontFamily: 'var(--font-logo)' }}>Valores:</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-xs mb-1.5" style={{ fontFamily: 'var(--font-logo)' }}>Valores:</h4>
+                    <div className="flex flex-wrap gap-1.5">
                       {profile.valores.map((valor, idx) => (
-                        <span key={idx} className="text-xs bg-secondary px-2 py-1 rounded">
+                        <span key={idx} className="text-xs bg-secondary px-1.5 py-0.5 rounded">
                           {valor}
                         </span>
                       ))}
@@ -86,11 +86,11 @@ export default function BrandProfilesPage() {
                 )}
                 {profile.tomDeVoz && (
                   <div>
-                    <h4 className="text-sm" style={{ fontFamily: 'var(--font-logo)' }}>Tom de Voz:</h4>
-                    <p className="text-sm text-muted-foreground">{profile.tomDeVoz.principal}</p>
+                    <h4 className="text-xs" style={{ fontFamily: 'var(--font-logo)' }}>Tom de Voz:</h4>
+                    <p className="text-xs text-muted-foreground">{profile.tomDeVoz.principal}</p>
                   </div>
                 )}
-                <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                <div className="flex flex-col sm:flex-row gap-1.5 pt-3">
                   <Button variant="outline" size="sm" onClick={() => handleEdit(profile)} className="flex-1 sm:flex-none">
                     Editar
                   </Button>

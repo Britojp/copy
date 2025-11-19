@@ -113,22 +113,22 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
     <div
       className="flex flex-col h-full bg-card shadow-sm relative rounded-none lg:rounded-lg"
     >
-      <div className={`${isCollapsed ? 'lg:p-2 p-6 pb-4' : 'p-6 pb-4'}`}>
+      <div className={`${isCollapsed ? 'lg:p-2 p-4 pb-3' : 'p-4 pb-3 lg:p-4 lg:pb-3'}`}>
         <div className="space-y-4">
           <div className="flex items-center justify-center relative">
             {!isCollapsed && (
-              <span className="text-lg text-foreground" style={{ fontFamily: 'var(--font-logo)' }}>copy.</span>
+              <span className="text-lg lg:text-lg text-foreground" style={{ fontFamily: 'var(--font-logo)' }}>copy.</span>
             )}
             {isCollapsed && (
-              <span className="text-lg text-foreground lg:block hidden" style={{ fontFamily: 'var(--font-logo)' }}>c.</span>
+              <span className="text-base lg:text-base text-foreground lg:block hidden" style={{ fontFamily: 'var(--font-logo)' }}>c.</span>
             )}
           </div>
         </div>
-        {!isCollapsed && <div className="mt-4 mx-4"></div>}
+        {!isCollapsed && <div className="mt-3 lg:mt-3 mx-3 lg:mx-4"></div>}
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <nav className={`space-y-1 ${isCollapsed ? 'lg:px-2 px-4' : 'px-4'}`}>
+        <nav className={`space-y-1 ${isCollapsed ? 'lg:px-2 px-3' : 'px-3 lg:px-3'}`}>
           {routes.map((route) => {
             const IconComponent = route.icon
             const hasSubRoutes = route.subRoutes && route.subRoutes.length > 0
@@ -139,44 +139,44 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
               return (
                 <div 
                   key={route.label} 
-                  className={`space-y-1 rounded-lg ${isActive ? 'bg-primary/10' : ''}`}
+                  className={`space-y-1 rounded-lg ${isActive ? 'bg-primary' : ''}`}
                 >
                   <button
                     onClick={() => !isCollapsed && toggleExpand(route.label)}
                     className={`
                       flex items-center relative rounded-lg w-full
-                      ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-3' : 'gap-3 px-3 py-3'}
+                      ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-2 px-2 py-2' : 'gap-2 px-2 py-2 lg:py-2'}
                       ${isActive 
-                        ? 'text-foreground' 
+                        ? 'text-primary-foreground' 
                         : 'text-foreground hover:bg-muted/50'
                       }
                     `}
                     title={isCollapsed ? route.label : undefined}
                   >
                     <IconComponent 
-                      size={20} 
-                      className={`flex-shrink-0 ${!isActive ? 'text-muted-foreground' : ''}`} 
+                      size={18}
+                      className={`flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4 ${!isActive ? 'text-muted-foreground' : 'text-primary-foreground'}`} 
                     />
                     {!isCollapsed && (
                       <>
-                        <span className="text-sm overflow-hidden whitespace-nowrap flex-1 text-left">
+                        <span className="text-xs lg:text-xs overflow-hidden whitespace-nowrap flex-1 text-left">
                           {route.label}
                         </span>
                         {isExpanded ? (
-                          <ChevronUp size={16} className="flex-shrink-0 text-muted-foreground" />
+                          <ChevronUp size={14} className={`flex-shrink-0 lg:w-3.5 lg:h-3.5 w-3.5 h-3.5 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                         ) : (
-                          <ChevronDown size={16} className="flex-shrink-0 text-muted-foreground" />
+                          <ChevronDown size={14} className={`flex-shrink-0 lg:w-3.5 lg:h-3.5 w-3.5 h-3.5 ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                         )}
                       </>
                     )}
                     {isCollapsed && (
-                      <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
+                      <span className="text-xs overflow-hidden whitespace-nowrap lg:hidden">
                         {route.label}
                       </span>
                     )}
                   </button>
                   {!isCollapsed && isExpanded && route.subRoutes && (
-                    <div className="ml-8 space-y-1 pb-1">
+                    <div className="ml-6 lg:ml-6 space-y-1 pb-1">
                       {route.subRoutes.map((subRoute) => {
                         const isSubActive = location.pathname === subRoute.path
                         return (
@@ -184,9 +184,9 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
                             key={subRoute.path}
                             onClick={() => handleNavigate(subRoute.path)}
                             className={`
-                              flex items-center w-full rounded-lg px-3 py-2 text-sm
+                              flex items-center w-full rounded-lg px-2 py-1.5 text-xs
                               ${isSubActive 
-                                ? 'text-foreground font-medium' 
+                                ? 'bg-primary text-primary-foreground font-medium' 
                                 : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                               }
                             `}
@@ -207,25 +207,25 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
                 onClick={() => route.path && handleNavigate(route.path)}
                 className={`
                   flex items-center relative rounded-lg
-                  ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-3' : 'gap-3 px-3 py-3'}
+                  ${isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-2 px-2 py-2' : 'gap-2 px-2 py-2'}
                   ${isActive 
-                    ? 'w-full bg-primary/10 text-foreground' 
+                    ? 'w-full bg-primary text-primary-foreground' 
                     : 'w-full text-foreground hover:bg-muted/50 rounded-lg'
                   }
                 `}
                 title={isCollapsed ? route.label : undefined}
               >
                 <IconComponent 
-                  size={20} 
-                  className={`flex-shrink-0 ${!isActive ? 'text-muted-foreground' : ''}`} 
+                  size={18}
+                  className={`flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4 ${!isActive ? 'text-muted-foreground' : 'text-primary-foreground'}`} 
                 />
                 {!isCollapsed && (
-                  <span className="text-sm overflow-hidden whitespace-nowrap">
+                  <span className="text-xs overflow-hidden whitespace-nowrap">
                     {route.label}
                   </span>
                 )}
                 {isCollapsed && (
-                  <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
+                  <span className="text-xs overflow-hidden whitespace-nowrap lg:hidden">
                     {route.label}
                   </span>
                 )}
@@ -235,18 +235,18 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
         </nav>
       </div>
 
-      <div className={`space-y-1 ${isCollapsed ? 'lg:p-2 p-4' : 'p-4'}`}>
+      <div className={`space-y-1 ${isCollapsed ? 'lg:p-2 p-3' : 'p-3'}`}>
   {!isCollapsed && (
-    <div className="px-3 py-2 mb-2">
+    <div className="px-2 py-1.5 mb-2">
       <div className="flex items-center gap-2">
-        <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-          <User size={18} className="text-muted-foreground" />
+        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+          <User size={16} className="w-4 h-4 text-muted-foreground" />
         </div>
 
-        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-          <span className="text-sm text-foreground leading-tight">João Pedro</span>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <span className="text-xs text-foreground leading-tight">João Pedro</span>
 
-          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary w-fit leading-tight">
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary w-fit leading-tight">
             Admin
           </span>
         </div>
@@ -256,43 +256,43 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
 
         {isCollapsed && (
           <div className="lg:px-2 lg:py-2 lg:mb-2 lg:flex lg:justify-center hidden">
-            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-              <User size={18} className="text-muted-foreground" />
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+              <User size={16} className="w-4 h-4 text-muted-foreground" />
             </div>
           </div>
         )}
         <button 
           className={`flex items-center w-full transition-colors text-foreground hover:bg-muted rounded-lg ${
-            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-2.5' : 'gap-3 px-3 py-2.5'
+            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-2 px-2 py-2' : 'gap-2 px-2 py-2'
           }`}
           title={isCollapsed ? 'Configurações' : undefined}
         >
-          <Settings size={20} className="flex-shrink-0 text-muted-foreground" />
+          <Settings size={18} className="flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4 text-muted-foreground" />
           {!isCollapsed && (
-            <span className="text-sm overflow-hidden whitespace-nowrap">
+            <span className="text-xs overflow-hidden whitespace-nowrap">
               Configurações
             </span>
           )}
           {isCollapsed && (
-            <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
+            <span className="text-xs overflow-hidden whitespace-nowrap lg:hidden">
               Configurações
             </span>
           )}
         </button>
         <button 
           className={`flex items-center w-full transition-colors text-destructive hover:bg-muted rounded-lg ${
-            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-3 px-3 py-2.5' : 'gap-3 px-3 py-2.5'
+            isCollapsed ? 'lg:justify-center lg:px-2 justify-start gap-2 px-2 py-2' : 'gap-2 px-2 py-2'
           }`}
           title={isCollapsed ? 'Sair' : undefined}
         >
-          <LogOut size={20} className="flex-shrink-0" />
+          <LogOut size={18} className="flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4" />
           {!isCollapsed && (
-            <span className="text-sm overflow-hidden whitespace-nowrap">
+            <span className="text-xs overflow-hidden whitespace-nowrap">
               Sair
             </span>
           )}
           {isCollapsed && (
-            <span className="text-sm overflow-hidden whitespace-nowrap lg:hidden">
+            <span className="text-xs overflow-hidden whitespace-nowrap lg:hidden">
               Sair
             </span>
           )}
@@ -301,16 +301,16 @@ export function AppSidebar({ collapsed = false, onNavigate, onToggleCollapse }: 
           <button
             onClick={onToggleCollapse}
             className={`hidden lg:flex items-center w-full transition-colors text-foreground hover:bg-muted rounded-lg mt-2 ${
-              isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
+              isCollapsed ? 'justify-center px-2 py-2' : 'gap-2 px-2 py-2'
             }`}
             title={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
           >
             {isCollapsed ? (
-              <ChevronRight size={20} className="flex-shrink-0 text-muted-foreground" />
+              <ChevronRight size={18} className="flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4 text-muted-foreground" />
             ) : (
               <>
-                <ChevronLeft size={20} className="flex-shrink-0 text-muted-foreground" />
-                <span className="text-sm overflow-hidden whitespace-nowrap">
+                <ChevronLeft size={18} className="flex-shrink-0 lg:w-4 lg:h-4 w-4 h-4 text-muted-foreground" />
+                <span className="text-xs overflow-hidden whitespace-nowrap">
                   Colapsar
                 </span>
               </>

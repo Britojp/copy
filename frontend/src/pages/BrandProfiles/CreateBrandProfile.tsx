@@ -9,7 +9,7 @@ export default function CreateBrandProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:px-8 lg:pb-8 lg:pt-0">
+    <div className="min-h-screen bg-background p-3 sm:p-4 lg:px-6 lg:pb-6 lg:pt-0">
       <BrandProfileForm profile={null} onClose={handleClose} />
     </div>
   );

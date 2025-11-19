@@ -22,10 +22,19 @@ function App() {
     <div className="min-h-screen bg-background">
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed left-4 top-4 z-[60] lg:hidden h-10 w-10 rounded-lg bg-card border border-border flex items-center justify-center shadow-sm"
+        className="fixed left-4 top-4 z-[60] lg:hidden h-11 w-11 rounded-lg bg-card border border-border flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 group"
         aria-label="Toggle menu"
       >
-        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+        <div className="relative w-5 h-5 flex items-center justify-center">
+          <Menu 
+            size={22} 
+            className={`absolute transition-all duration-300 ${sidebarOpen ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'} group-hover:text-primary`}
+          />
+          <X 
+            size={22} 
+            className={`absolute transition-all duration-300 ${sidebarOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'} group-hover:text-primary`}
+          />
+        </div>
       </button>
 
       {sidebarOpen && (

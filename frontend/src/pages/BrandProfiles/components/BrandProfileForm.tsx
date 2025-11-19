@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createBrandProfile, updateBrandProfile } from '../../../services/brand';
 import { type BrandProfile, type TomDeVoz } from '../../../types/brand';
 import { Button } from '../../../components/ui/button';
-import { Card } from '../../../components/ui/card';
+import { Card } from '../../../components/common/Card';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
@@ -92,11 +92,11 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
   };
 
   return (
-    <Card className="p-4 sm:p-6 mb-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-          <h2 className="text-xl sm:text-2xl" style={{ fontFamily: 'var(--font-logo)' }}>{profile ? 'Editar Perfil' : 'Novo Perfil'}</h2>
-          <Button type="button" variant="ghost" onClick={onClose} className="w-full sm:w-auto">
+    <Card padding="md" className="mb-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
+          <h2 className="text-sm" style={{ fontFamily: 'var(--font-logo)' }}>{profile ? 'Editar Perfil' : 'Novo Perfil'}</h2>
+          <Button type="button" variant="ghost" size="sm" onClick={onClose} className="w-full sm:w-auto">
             Cancelar
           </Button>
         </div>
@@ -107,43 +107,43 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
           </Alert>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="nome">Nome da Marca*</Label>
-            <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="nome" className="text-xs">Nome da Marca*</Label>
+            <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required className="h-8 text-xs" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="setor">Setor/Nicho*</Label>
-            <Input id="setor" value={setor} onChange={(e) => setSetor(e.target.value)} required />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg" style={{ fontFamily: 'var(--font-logo)' }}>Público-Alvo</h3>
-          <div className="space-y-2">
-            <Label htmlFor="faixaEtaria">Faixa Etária</Label>
-            <Input id="faixaEtaria" value={faixaEtaria} onChange={(e) => setFaixaEtaria(e.target.value)} placeholder="Ex: 25-45 anos" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="interesses">Interesses (separados por vírgula)</Label>
-            <Input id="interesses" value={interesses} onChange={(e) => setInteresses(e.target.value)} placeholder="Ex: tecnologia, saúde, fitness" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="comportamento">Comportamento</Label>
-            <Textarea id="comportamento" value={comportamento} onChange={(e) => setComportamento(e.target.value)} placeholder="Descreva o comportamento do público-alvo" />
+          <div className="space-y-1.5">
+            <Label htmlFor="setor" className="text-xs">Setor/Nicho*</Label>
+            <Input id="setor" value={setor} onChange={(e) => setSetor(e.target.value)} required className="h-8 text-xs" />
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg" style={{ fontFamily: 'var(--font-logo)' }}>Valores e Tom</h3>
-          <div className="space-y-2">
-            <Label htmlFor="valores">Valores (separados por vírgula)</Label>
-            <Input id="valores" value={valores} onChange={(e) => setValores(e.target.value)} placeholder="Ex: inovação, qualidade, confiança" />
+        <div className="space-y-3">
+          <h3 className="text-xs" style={{ fontFamily: 'var(--font-logo)' }}>Público-Alvo</h3>
+          <div className="space-y-1.5">
+            <Label htmlFor="faixaEtaria" className="text-xs">Faixa Etária</Label>
+            <Input id="faixaEtaria" value={faixaEtaria} onChange={(e) => setFaixaEtaria(e.target.value)} placeholder="Ex: 25-45 anos" className="h-8 text-xs" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="tomPrincipal">Tom de Voz Principal</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="interesses" className="text-xs">Interesses (separados por vírgula)</Label>
+            <Input id="interesses" value={interesses} onChange={(e) => setInteresses(e.target.value)} placeholder="Ex: tecnologia, saúde, fitness" className="h-8 text-xs" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="comportamento" className="text-xs">Comportamento</Label>
+            <Textarea id="comportamento" value={comportamento} onChange={(e) => setComportamento(e.target.value)} placeholder="Descreva o comportamento do público-alvo" className="text-xs min-h-[80px]" />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-xs" style={{ fontFamily: 'var(--font-logo)' }}>Valores e Tom</h3>
+          <div className="space-y-1.5">
+            <Label htmlFor="valores" className="text-xs">Valores (separados por vírgula)</Label>
+            <Input id="valores" value={valores} onChange={(e) => setValores(e.target.value)} placeholder="Ex: inovação, qualidade, confiança" className="h-8 text-xs" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="tomPrincipal" className="text-xs">Tom de Voz Principal</Label>
             <Select value={tomPrincipal} onValueChange={(value) => setTomPrincipal(value as TomDeVoz)}>
-              <SelectTrigger>
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -155,45 +155,45 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="caracteristicasTom">Características do Tom (separadas por vírgula)</Label>
-            <Input id="caracteristicasTom" value={caracteristicasTom} onChange={(e) => setCaracteristicasTom(e.target.value)} placeholder="Ex: amigável, técnico, inspirador" />
+          <div className="space-y-1.5">
+            <Label htmlFor="caracteristicasTom" className="text-xs">Características do Tom (separadas por vírgula)</Label>
+            <Input id="caracteristicasTom" value={caracteristicasTom} onChange={(e) => setCaracteristicasTom(e.target.value)} placeholder="Ex: amigável, técnico, inspirador" className="h-8 text-xs" />
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg" style={{ fontFamily: 'var(--font-logo)' }}>Identidade Visual</h3>
-          <div className="space-y-2">
-            <Label htmlFor="paletaCores">Paleta de Cores (separadas por vírgula)</Label>
-            <Input id="paletaCores" value={paletaCores} onChange={(e) => setPaletaCores(e.target.value)} placeholder="Ex: azul, branco, verde" />
+        <div className="space-y-3">
+          <h3 className="text-xs" style={{ fontFamily: 'var(--font-logo)' }}>Identidade Visual</h3>
+          <div className="space-y-1.5">
+            <Label htmlFor="paletaCores" className="text-xs">Paleta de Cores (separadas por vírgula)</Label>
+            <Input id="paletaCores" value={paletaCores} onChange={(e) => setPaletaCores(e.target.value)} placeholder="Ex: azul, branco, verde" className="h-8 text-xs" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="estiloPreferido">Estilo Preferido</Label>
-            <Input id="estiloPreferido" value={estiloPreferido} onChange={(e) => setEstiloPreferido(e.target.value)} placeholder="Ex: minimalista, moderno, vintage" />
+          <div className="space-y-1.5">
+            <Label htmlFor="estiloPreferido" className="text-xs">Estilo Preferido</Label>
+            <Input id="estiloPreferido" value={estiloPreferido} onChange={(e) => setEstiloPreferido(e.target.value)} placeholder="Ex: minimalista, moderno, vintage" className="h-8 text-xs" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="elementosVisuais">Elementos Visuais (separados por vírgula)</Label>
-            <Input id="elementosVisuais" value={elementosVisuais} onChange={(e) => setElementosVisuais(e.target.value)} placeholder="Ex: fotos, ilustrações, ícones" />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg" style={{ fontFamily: 'var(--font-logo)' }}>Diferenciais e Restrições</h3>
-          <div className="space-y-2">
-            <Label htmlFor="diferenciais">Diferenciais (separados por vírgula)</Label>
-            <Input id="diferenciais" value={diferenciais} onChange={(e) => setDiferenciais(e.target.value)} placeholder="Ex: atendimento 24h, entrega rápida" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="evitar">O que Evitar (separado por vírgula)</Label>
-            <Input id="evitar" value={evitar} onChange={(e) => setEvitar(e.target.value)} placeholder="Ex: temas políticos, linguagem informal" />
+          <div className="space-y-1.5">
+            <Label htmlFor="elementosVisuais" className="text-xs">Elementos Visuais (separados por vírgula)</Label>
+            <Input id="elementosVisuais" value={elementosVisuais} onChange={(e) => setElementosVisuais(e.target.value)} placeholder="Ex: fotos, ilustrações, ícones" className="h-8 text-xs" />
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+        <div className="space-y-3">
+          <h3 className="text-xs" style={{ fontFamily: 'var(--font-logo)' }}>Diferenciais e Restrições</h3>
+          <div className="space-y-1.5">
+            <Label htmlFor="diferenciais" className="text-xs">Diferenciais (separados por vírgula)</Label>
+            <Input id="diferenciais" value={diferenciais} onChange={(e) => setDiferenciais(e.target.value)} placeholder="Ex: atendimento 24h, entrega rápida" className="h-8 text-xs" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="evitar" className="text-xs">O que Evitar (separado por vírgula)</Label>
+            <Input id="evitar" value={evitar} onChange={(e) => setEvitar(e.target.value)} placeholder="Ex: temas políticos, linguagem informal" className="h-8 text-xs" />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button type="submit" disabled={loading} size="sm" className="w-full sm:w-auto">
             {loading ? 'Salvando...' : 'Salvar Perfil'}
           </Button>
-          <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto">
+          <Button type="button" variant="outline" size="sm" onClick={onClose} className="w-full sm:w-auto">
             Cancelar
           </Button>
         </div>
