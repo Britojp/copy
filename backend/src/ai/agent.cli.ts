@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { CliModule } from './cli.module';
-import { AgentService } from './agent.service';
+import { CliModule } from './modules/cli.module';
+import { AgentService } from './services/agent.service';
 
 async function main() {
   const app = await NestFactory.createApplicationContext(CliModule, {

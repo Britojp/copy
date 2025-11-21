@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Put, Delete, Param } from '@nestjs/common';
-import { AgentService } from './agent.service';
-import { AgentBaseDto, PipelineDto, CreateBrandProfileDto, UpdateBrandProfileDto } from './dto/common.dto';
-import { BrandProfileRepository } from './repositories/brand-profile.repository';
+import { AgentService } from '../services/agent.service';
+import { AgentBaseDto, PipelineDto, CreateBrandProfileDto, UpdateBrandProfileDto } from '../dto/common.dto';
+import { BrandProfileRepository } from '../repositories/brand-profile.repository';
 
 @Controller('ai')
 export class AiController {

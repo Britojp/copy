@@ -31,7 +31,7 @@ const routes: Route[] = [
     icon: Workflow,
     subRoutes: [
       {
-        path: "/",
+        path: "/seletor-datas",
         label: "Seletor de Datas."
       },
       {

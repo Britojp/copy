@@ -10,8 +10,10 @@ export function buildTypeOrmOptions(config: ConfigService): TypeOrmModuleOptions
     password: config.getOrThrow<string>('DB_PASSWORD'),
     database: config.getOrThrow<string>('DB_DATABASE'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/migrations/*{.ts,.js}'],
     synchronize: false,
     autoLoadEntities: true,
+    migrationsRun: true,
   };
 }
 

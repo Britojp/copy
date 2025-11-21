@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { CliModule } from './cli.module';
-import { GeminiService } from './gemini.service';
+import { CliModule } from './modules/cli.module';
+import { GeminiService } from './services/gemini.service';
 
 async function main() {
   const app = await NestFactory.createApplicationContext(CliModule, {

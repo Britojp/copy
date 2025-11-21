@@ -55,11 +55,11 @@ export default function AgentPipelinePage() {
   const [error, setError] = useState<string | null>(null);
   const [correlationId, setCorrelationId] = useState<string | null>(null);
   const [run1, setRun1] = useState<string | null>(null);
-  const [run2, setRun2] = useState<string | null>(null);
-  const [run3, setRun3] = useState<string | null>(null);
-  const [run4, setRun4] = useState<string | null>(null);
+  const [_run2, setRun2] = useState<string | null>(null);
+  const [_run3, setRun3] = useState<string | null>(null);
+  const [_run4, setRun4] = useState<string | null>(null);
   const [dataOut, setDataOut] = useState<unknown>(null);
-  const [infoOut, setInfoOut] = useState<unknown>(null);
+  const [_infoOut, setInfoOut] = useState<unknown>(null);
   const [descOut, setDescOut] = useState<unknown>(null);
   const [imgPromptOut, setImgPromptOut] = useState<unknown>(null);
 
