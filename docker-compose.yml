@@ -1,62 +1,29 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: copy_mkt_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: copy_mkt
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     ports:
       - "5434:5432"
     volumes:
       - pgdata_copy_mkt:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d copy_mkt"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 10
-    networks:
-      - copy_mkt_network
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: copy_mkt_backend
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_DATABASE: copy_mkt
-      CORS_ORIGIN: http://localhost:8888
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash-8b}
-    ports:
-      - "8081:3000"
-    depends_on:
-      db:
-        condition: service_healthy
+      retries: 5
+      start_period: 30s
     networks:
       - copy_mkt_network
     restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: "http://localhost:8081"
-    container_name: copy_mkt_frontend
-    ports:
-      - "8888:5173"
-    depends_on:
-      - backend
-    networks:
-      - copy_mkt_network
-    restart: unless-stopped
+    shm_size: 256mb
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: 1.0
 
 networks:
   copy_mkt_network:
@@ -64,4 +31,6 @@ networks:
 
 volumes:
   pgdata_copy_mkt:
+
+
 

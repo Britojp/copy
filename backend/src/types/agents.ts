@@ -69,5 +69,3 @@ export type GeradorPromptImagemPostItem = {
 export type GeradorPromptImagemPostOutput = {
   itens: GeradorPromptImagemPostItem[];
 };
-
-

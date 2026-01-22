@@ -7,7 +7,8 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Alert, AlertDescription } from '../../../components/ui/alert';
+import { toast } from '../../../lib/toast';
+import { extractErrorMessage, extractErrorDetails } from '../../../services/errors';
 
 type Props = {
   profile: BrandProfile | null;
@@ -29,7 +30,6 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
   const [diferenciais, setDiferenciais] = useState('');
   const [evitar, setEvitar] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (profile) {
@@ -52,7 +52,6 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     const data = {
       nome,
@@ -79,13 +78,17 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
     try {
       if (profile) {
         await updateBrandProfile(profile.id, data);
+        toast.success('Perfil atualizado com sucesso');
       } else {
         await createBrandProfile(data);
+        toast.success('Perfil criado com sucesso');
       }
       onClose();
     } catch (err) {
-      setError('Erro ao salvar perfil');
-      console.error(err);
+      const message = extractErrorMessage(err);
+      const details = extractErrorDetails(err);
+      toast.error('Erro ao salvar perfil', details || message);
+      console.error('Erro ao salvar perfil:', err);
     } finally {
       setLoading(false);
     }
@@ -100,12 +103,6 @@ export default function BrandProfileForm({ profile, onClose }: Props) {
             Cancelar
           </Button>
         </div>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1.5">

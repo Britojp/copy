@@ -113,7 +113,7 @@ export function EtapaBuscadorDatas({
                           </h4>
                           <div className="flex gap-1.5 flex-wrap flex-shrink-0">
                             {it?.relevancia ? (
-                              <Badge variant="muted">
+                              <Badge variant="secondary">
                                 {it.relevancia}
                               </Badge>
                             ) : null}

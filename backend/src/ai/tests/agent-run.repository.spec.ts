@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AgentRunRepository } from '../repositories/agent-run.repository';
-import { AgentRun, AgentType } from '../entities/agent-run.entity';
+import { AgentRun } from '../entities/agent-run.entity';
+import { AgentType } from '../../types/agent';
 
 describe('AgentRunRepository', () => {
   let repository: AgentRunRepository;

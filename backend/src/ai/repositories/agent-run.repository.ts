@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { AgentRun, AgentStatus, AgentType } from '../entities/agent-run.entity';
+import { AgentRun } from '../entities/agent-run.entity';
+import { AgentStatus, AgentType } from '../../types/agent';
 import { BaseCrudRepository } from '../../common/repository/base-crud.repository';
 
 @Injectable()

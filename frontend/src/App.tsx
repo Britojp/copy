@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import './App.css'
-import AgentPipelinePage from './pages/AgentPipeline'
-import BrandProfilesPage from './pages/BrandProfiles/BrandProfiles'
-import CreateBrandProfilePage from './pages/BrandProfiles/CreateBrandProfile'
 import { Route, Routes } from 'react-router-dom'
 import { AppSidebar } from './components/common/blocks/app-sidebar'
 import { Menu, X } from 'lucide-react'
+import { LoadingSpinner } from './components/common/LoadingSpinner'
+import { Toaster } from './components/ui/toaster'
+
+const AgentPipelinePage = lazy(() => import('./pages/AgentPipeline'))
+const BrandProfilesPage = lazy(() => import('./pages/BrandProfiles/BrandProfiles'))
+const CreateBrandProfilePage = lazy(() => import('./pages/BrandProfiles/CreateBrandProfile'))
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -66,13 +69,16 @@ function App() {
           ? 'lg:ml-[calc(4rem+1rem)] lg:pt-4' 
           : 'lg:ml-[calc(16rem+1rem)] lg:pt-4'
       }`}>
-        <Routes>
-          <Route path="/" element={<AgentPipelinePage />} />
-          <Route path="/agent-pipeline" element={<AgentPipelinePage />} />
-          <Route path="/brand-profiles" element={<BrandProfilesPage />} />
-          <Route path="/brand-profiles/create" element={<CreateBrandProfilePage />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<AgentPipelinePage />} />
+            <Route path="/agent-pipeline" element={<AgentPipelinePage />} />
+            <Route path="/brand-profiles" element={<BrandProfilesPage />} />
+            <Route path="/brand-profiles/create" element={<CreateBrandProfilePage />} />
+          </Routes>
+        </Suspense>
       </main>
+      <Toaster />
     </div>
   )
 }

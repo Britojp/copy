@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { CliModule } from './modules/cli.module';
 import { AgentService } from './services/agent.service';
+import { ExternalServiceError, ValidationError, AgentExecutionError } from '../common/errors/AppError';
 
 async function main() {
   const app = await NestFactory.createApplicationContext(CliModule, {
@@ -30,48 +31,66 @@ async function main() {
     }
     const agent = app.get(AgentService);
     let output = '';
-    switch (sub) {
-      case 'buscador-data': {
-        const res = await agent.runBuscadorData(input);
-        output = res.output;
-        break;
+    try {
+      switch (sub) {
+        case 'buscador-data': {
+          const res = await agent.runBuscadorData(input);
+          output = res.output;
+          break;
+        }
+        case 'buscador-informacoes': {
+          const res = await agent.runBuscadorInformacoes(input);
+          output = res.output;
+          break;
+        }
+        case 'escritor-descricao': {
+          const res = await agent.runEscritorDescricao(input);
+          output = res.output;
+          break;
+        }
+        case 'gerador-prompt-imagem-post': {
+          const res = await agent.runGeradorPromptImagemPost(input);
+          output = res.output;
+          break;
+        }
+        case 'pipeline': {
+          output = await agent.runPipeline(input, tone as any, visuals);
+          break;
+        }
+        case 'livre': {
+          const res = await agent.runAgent(input);
+          output = res.output;
+          break;
+        }
+        default:
+          console.error(`Agente desconhecido: ${sub}`);
+          process.exit(1);
       }
-      case 'buscador-informacoes': {
-        const res = await agent.runBuscadorInformacoes(input);
-        output = res.output;
-        break;
-      }
-      case 'escritor-descricao': {
-        const res = await agent.runEscritorDescricao(input);
-        output = res.output;
-        break;
-      }
-      case 'gerador-prompt-imagem-post': {
-        const res = await agent.runGeradorPromptImagemPost(input);
-        output = res.output;
-        break;
-      }
-      case 'pipeline': {
-        output = await agent.runPipeline(input, tone as any, visuals);
-        break;
-      }
-      case 'livre': {
-        const res = await agent.runAgent(input);
-        output = res.output;
-        break;
-      }
-      default:
-        console.error(`Agente desconhecido: ${sub}`);
+      console.log(output);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.error(`[VALIDATION_ERROR] ${error.message}`);
         process.exit(1);
+      } else if (error instanceof ExternalServiceError) {
+        console.error(`[EXTERNAL_SERVICE_ERROR] ${error.message}`);
+        process.exit(1);
+      } else if (error instanceof AgentExecutionError) {
+        console.error(`[AGENT_EXECUTION_ERROR] ${error.message}`);
+        process.exit(1);
+      } else {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`[ERROR] ${message}`);
+        process.exit(1);
+      }
     }
-    console.log(output);
   } finally {
     await app.close();
   }
 }
 
 main().catch((err) => {
-  console.error(err);
+  const message = err instanceof Error ? err.message : String(err);
+  console.error(`[FATAL_ERROR] ${message}`);
   process.exit(1);
 });
 

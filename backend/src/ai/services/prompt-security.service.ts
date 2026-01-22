@@ -1,4 +1,5 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ValidationError } from '../../common/errors/AppError';
 
 @Injectable()
 export class PromptSecurityService {
@@ -56,17 +57,17 @@ export class PromptSecurityService {
 
   validateAndSanitize(input: string): string {
     if (!input || typeof input !== 'string') {
-      throw new BadRequestException('Input inválido: deve ser uma string não vazia');
+      throw new ValidationError('Input inválido: deve ser uma string não vazia');
     }
 
     const originalLength = input.length;
     
     if (originalLength === 0) {
-      throw new BadRequestException('Input não pode estar vazio');
+      throw new ValidationError('Input não pode estar vazio');
     }
 
     if (originalLength > this.MAX_INPUT_LENGTH) {
-      throw new BadRequestException(
+      throw new ValidationError(
         `Input muito longo: máximo ${this.MAX_INPUT_LENGTH} caracteres, recebido ${originalLength}`
       );
     }
@@ -79,7 +80,7 @@ export class PromptSecurityService {
     sanitized = this.escapeSpecialChars(sanitized);
 
     if (sanitized.length === 0) {
-      throw new BadRequestException('Input contém apenas caracteres inválidos ou perigosos');
+      throw new ValidationError('Input contém apenas caracteres inválidos ou perigosos');
     }
 
     return sanitized.trim();
@@ -102,8 +103,9 @@ export class PromptSecurityService {
     for (const pattern of this.SUSPICIOUS_PATTERNS) {
       const regex = new RegExp(pattern.source, pattern.flags);
       if (regex.test(input)) {
-        throw new BadRequestException(
-          'Input contém padrões suspeitos de prompt injection. Operação bloqueada por segurança.'
+        throw new ValidationError(
+          'Input contém padrões suspeitos de prompt injection. Operação bloqueada por segurança.',
+          'PROMPT_INJECTION_DETECTED'
         );
       }
     }
@@ -126,8 +128,9 @@ export class PromptSecurityService {
         ).join(' ');
         
         if (this.isDangerousContext(context, dangerousWord)) {
-          throw new BadRequestException(
-            `Input contém palavras perigosas associadas a tentativas de manipulação. Operação bloqueada.`
+          throw new ValidationError(
+            'Input contém palavras perigosas associadas a tentativas de manipulação. Operação bloqueada.',
+            'DANGEROUS_WORD_DETECTED'
           );
         }
       }

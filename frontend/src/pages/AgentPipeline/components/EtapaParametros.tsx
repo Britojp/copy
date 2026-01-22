@@ -7,6 +7,8 @@ import { Section } from '../../../components/common/Section';
 import { Field } from '../../../components/common/Field';
 import { Card } from '../../../components/common/Card';
 import { formatDateBR } from '../../../lib/format';
+import { extractErrorMessage } from '../../../services/errors';
+import { toast } from '../../../lib/toast';
 
 type HistoryItem = {
   id: string;
@@ -24,13 +26,11 @@ type EtapaParametrosProps = {
   startDate: string;
   endDate: string;
   tone: Tone;
-  visualPrefs: string;
   brandProfileId: string;
   onNichoChange: (value: string) => void;
   onStartDateChange: (value: string) => void;
   onEndDateChange: (value: string) => void;
   onToneChange: (value: Tone) => void;
-  onVisualPrefsChange: (value: string) => void;
   onBrandProfileIdChange: (value: string) => void;
   onNext: () => void;
   loading?: boolean;
@@ -43,13 +43,11 @@ export function EtapaParametros({
   startDate,
   endDate,
   tone,
-  visualPrefs,
   brandProfileId,
   onNichoChange,
   onStartDateChange,
   onEndDateChange,
   onToneChange,
-  onVisualPrefsChange,
   onBrandProfileIdChange,
   onNext,
   loading = false,
@@ -61,7 +59,11 @@ export function EtapaParametros({
   useEffect(() => {
     listBrandProfiles()
       .then((profiles) => setBrandProfiles(profiles))
-      .catch((err) => console.error('Erro ao carregar perfis:', err));
+      .catch((err) => {
+        const message = extractErrorMessage(err);
+        toast.error('Erro ao carregar perfis', message);
+        console.error('Erro ao carregar perfis:', err);
+      });
   }, []);
 
   const canProceed = nicho.trim() !== '';
@@ -125,16 +127,6 @@ export function EtapaParametros({
             ))}
           </select>
         </Field>
-        <div className="md:col-span-2">
-          <Field label="Preferências visuais (para etapas seguintes)">
-            <input
-              value={visualPrefs}
-              onChange={(e) => onVisualPrefsChange(e.target.value)}
-              placeholder="ex.: paleta azul; minimalista"
-              className="h-8 w-full rounded-md bg-background px-2 text-xs"
-            />
-          </Field>
-        </div>
       </div>
 
       <div className="mt-4 pt-4">
@@ -149,7 +141,7 @@ export function EtapaParametros({
                 <span>As <strong>datas</strong> são opcionais e ajudam a filtrar eventos em um período específico</span>
               </li>
               <li className="flex items-start gap-2">
-                <span>O <strong>tom</strong> e <strong>preferências visuais</strong> serão usados nas etapas seguintes para gerar conteúdo personalizado</span>
+                <span>O <strong>tom</strong> será usado nas etapas seguintes para gerar conteúdo personalizado</span>
               </li>
               <li className="flex items-start gap-2">
                 <span>Selecione um <strong>perfil de marca</strong> para aplicar as configurações salvas automaticamente</span>

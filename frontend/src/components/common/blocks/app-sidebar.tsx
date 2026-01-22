@@ -33,10 +33,6 @@ const routes: Route[] = [
       {
         path: "/seletor-datas",
         label: "Seletor de Datas."
-      },
-      {
-        path: "/agent-pipeline",
-        label: "Pipeline de Agentes."
       }
     ]
   },

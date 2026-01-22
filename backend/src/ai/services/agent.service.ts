@@ -1,4 +1,5 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ValidationError, AgentExecutionError, ExternalServiceError } from '../../common/errors/AppError';
 import { ConfigService } from '@nestjs/config';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { DynamicTool } from '@langchain/core/tools';
@@ -10,8 +11,9 @@ import { AgentOutputRepository } from '../repositories/agent-output.repository';
 import { AgentRunLinkRepository } from '../repositories/agent-run-link.repository';
 import { BrandProfileRepository } from '../repositories/brand-profile.repository';
 import { BrandProfile } from '../entities/brand-profile.entity';
-import { AgentType } from '../entities/agent-run.entity';
+import { AgentType } from '../../types/agent';
 import { randomUUID } from 'crypto';
+import { retryWithBackoff } from '../../common/utils/retry.util';
 
 
 @Injectable()
@@ -65,18 +67,21 @@ export class AgentService {
     const sanitizedInput = this.security.validateAndSanitize(input);
     
     if (this.security.detectRepetitionAttack(sanitizedInput)) {
-      throw new BadRequestException('Input detectado como possível ataque de repetição. Operação bloqueada.');
+      throw new ValidationError('Input detectado como possível ataque de repetição. Operação bloqueada.', 'REPETITION_ATTACK_DETECTED');
     }
 
     if (!this.security.validateTokenCount(sanitizedInput, 4000)) {
-      throw new BadRequestException('Input excede o limite de tokens permitido.');
+      throw new ValidationError('Input excede o limite de tokens permitido.', 'TOKEN_LIMIT_EXCEEDED');
     }
 
     const run = type
       ? await this.runs.createRun({ type, input: sanitizedInput, mdKeys: mdKeys ?? null, correlationId: correlationId ?? null, parentRunId: parentRunId ?? null })
       : null;
     if (run && parentRunId) {
-      await this.links.createLink(parentRunId, run.id, 'child');
+      const parentRun = await this.runs.findById(parentRunId);
+      if (parentRun) {
+        await this.links.createLink(parentRunId, run.id, 'child');
+      }
     }
 
     let brandContext = '';
@@ -109,7 +114,17 @@ export class AgentService {
       verbose: false,
     });
     try {
-      const result = await executor.invoke({ input: finalInput });
+      const result = await retryWithBackoff(
+        async () => {
+          return await executor.invoke({ input: finalInput });
+        },
+        {
+          maxRetries: 3,
+          initialDelayMs: 2000,
+          maxDelayMs: 30000,
+          backoffMultiplier: 2,
+        },
+      );
       const output = typeof result.output === 'string' ? result.output : JSON.stringify(result.output ?? '');
       if (run) await this.runs.finishRunOk(run.id, safeJsonParse(output));
       if (run) {
@@ -125,7 +140,36 @@ export class AgentService {
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       if (run) await this.runs.finishRunError(run.id, message);
-      throw e as unknown;
+      
+      if (e instanceof ValidationError) {
+        throw e;
+      }
+      
+      if (e instanceof ExternalServiceError) {
+        if (message.includes('429') || message.includes('quota') || message.includes('rate limit')) {
+          throw new ExternalServiceError(
+            'Limite de requisições da API excedido. Por favor, aguarde alguns minutos e tente novamente. Se o problema persistir, verifique sua cota na API do Google Gemini.',
+            'GEMINI_QUOTA_EXCEEDED',
+          );
+        }
+        throw e;
+      }
+      
+      if (e instanceof AgentExecutionError) {
+        throw e;
+      }
+      
+      if (e instanceof Error) {
+        if (message.includes('429') || message.includes('quota') || message.includes('rate limit')) {
+          throw new ExternalServiceError(
+            'Limite de requisições da API excedido. Por favor, aguarde alguns minutos e tente novamente. Se o problema persistir, verifique sua cota na API do Google Gemini.',
+            'GEMINI_QUOTA_EXCEEDED',
+          );
+        }
+        throw new AgentExecutionError(`Erro na execução do agente: ${message}`);
+      }
+      
+      throw new AgentExecutionError(`Erro desconhecido na execução do agente: ${String(e)}`);
     }
   }
 

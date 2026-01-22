@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { aiBuscadorData, aiBuscadorInformacoes, aiEscritorDescricao, aiGeradorPromptImagemPost } from '../services/ai';
+import { aiBuscadorData, aiBuscadorInformacoes, aiEscritorDescricao } from '../services/ai';
 import { type Tone } from '../types/common/ai';
 import { EtapaParametros } from './AgentPipeline/components/EtapaParametros';
 import { EtapaBuscadorDatas } from './AgentPipeline/components/EtapaBuscadorDatas';
 import { EtapaResultados } from './AgentPipeline/components/EtapaResultados';
 import { EtapaNavigator } from './AgentPipeline/components/EtapaNavigator';
+import { toast } from '../lib/toast';
+import { extractErrorMessage, extractErrorDetails } from '../services/errors';
 
 type HistoryItem = {
   id: string;
@@ -47,7 +49,6 @@ export default function AgentPipelinePage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [tone, setTone] = useState<Tone>('serio');
-  const [visualPrefs, setVisualPrefs] = useState('');
   const [brandProfileId, setBrandProfileId] = useState<string>('');
 
   // Estados das etapas
@@ -57,11 +58,9 @@ export default function AgentPipelinePage() {
   const [run1, setRun1] = useState<string | null>(null);
   const [_run2, setRun2] = useState<string | null>(null);
   const [_run3, setRun3] = useState<string | null>(null);
-  const [_run4, setRun4] = useState<string | null>(null);
   const [dataOut, setDataOut] = useState<unknown>(null);
   const [_infoOut, setInfoOut] = useState<unknown>(null);
   const [descOut, setDescOut] = useState<unknown>(null);
-  const [imgPromptOut, setImgPromptOut] = useState<unknown>(null);
 
   // Histórico
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -99,8 +98,13 @@ export default function AgentPipelinePage() {
       saveHistory(next);
 
       setCompletedSteps((prev) => new Set([...prev, 1]));
+      toast.success('Datas encontradas com sucesso');
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
+      const message = extractErrorMessage(e);
+      const details = extractErrorDetails(e);
+      setError(message);
+      toast.error('Erro ao buscar datas', details || message);
+      console.error('Erro ao buscar datas:', e);
     } finally {
       setLoading(false);
     }
@@ -111,7 +115,6 @@ export default function AgentPipelinePage() {
     setError(null);
     setInfoOut(null);
     setDescOut(null);
-    setImgPromptOut(null);
     
     setCompletedSteps((prev) => new Set([...prev, 2]));
     setCurrentStep(3);
@@ -129,27 +132,22 @@ export default function AgentPipelinePage() {
 
       const iText = typeof i.output === 'string' ? i.output : JSON.stringify(i.output);
       const ed = await aiEscritorDescricao({
-        input: `tom=${tone}\nObjeto do buscador-informacoes:\n${iText}\nGere 3 variações de descrição (curta, média, longa) conforme instruções.`,
-        correlationId: i.correlationId ?? undefined,
+        input: `tom=${tone}\nObjeto do buscador-informacoes:\n${iText}\nGere 3 opções de legendas, cada uma com versão curta e média conforme instruções.`,
+        correlationId: correlationId ?? undefined,
         parentRunId: i.runId ?? undefined,
         brandProfileId: brandProfileId || undefined,
       });
       setRun3(ed.runId ?? null);
       setDescOut(ed.output);
 
-      const edText = typeof ed.output === 'string' ? ed.output : JSON.stringify(ed.output);
-      const gp = await aiGeradorPromptImagemPost({
-        input: `Objeto A (escritor-descricao):\n${edText}\nObjeto B (buscador-informacoes):\n${iText}\nPreferencias visuais: ${visualPrefs}`,
-        correlationId: ed.correlationId ?? undefined,
-        parentRunId: ed.runId ?? undefined,
-        brandProfileId: brandProfileId || undefined,
-      });
-      setRun4(gp.runId ?? null);
-      setImgPromptOut(gp.output);
-
       setCompletedSteps((prev) => new Set([...prev, 3]));
+      toast.success('Legendas geradas com sucesso');
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
+      const message = extractErrorMessage(e);
+      const details = extractErrorDetails(e);
+      setError(message);
+      toast.error('Erro ao gerar legendas', details || message);
+      console.error('Erro ao gerar legendas:', e);
     } finally {
       setLoading(false);
     }
@@ -184,9 +182,9 @@ export default function AgentPipelinePage() {
     if (!loading) return null;
     // Etapa 2 carregando (buscando datas - navega imediatamente para etapa 2)
     if (currentStep === 2 && !dataOut) return 2;
-    // Quando seleciona data, navega para etapa 3 e processa descrições e prompts
+    // Quando seleciona data, navega para etapa 3 e processa legendas
     // Mostra loading na etapa 3 enquanto processa
-    if (currentStep === 3 && (!descOut || !imgPromptOut)) return 3;
+    if (currentStep === 3 && !descOut) return 3;
     return null;
   };
 
@@ -201,10 +199,8 @@ export default function AgentPipelinePage() {
     setDataOut(h.snapshot);
     setInfoOut(null);
     setDescOut(null);
-    setImgPromptOut(null);
     setRun2(null);
     setRun3(null);
-    setRun4(null);
     setCompletedSteps(new Set([1]));
     setCurrentStep(2);
   }
@@ -240,13 +236,11 @@ export default function AgentPipelinePage() {
           startDate={startDate}
           endDate={endDate}
           tone={tone}
-          visualPrefs={visualPrefs}
           brandProfileId={brandProfileId}
           onNichoChange={setNicho}
           onStartDateChange={setStartDate}
           onEndDateChange={setEndDate}
           onToneChange={setTone}
-          onVisualPrefsChange={setVisualPrefs}
           onBrandProfileIdChange={setBrandProfileId}
           onNext={handleNextFromEtapa1}
           loading={loading && currentStep === 1}
@@ -271,9 +265,11 @@ export default function AgentPipelinePage() {
       {currentStep === 3 && (
         <EtapaResultados
           descOut={descOut}
-          imgPromptOut={imgPromptOut}
           loading={loading}
           onBack={handleBack}
+          brandProfileId={brandProfileId || undefined}
+          correlationId={correlationId}
+          runId={_run3}
         />
       )}
 

@@ -1,13 +1,5 @@
 import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-
-export type AgentType =
-  | 'buscador-data'
-  | 'buscador-informacoes'
-  | 'escritor-descricao'
-  | 'gerador-prompt-imagem-post'
-  | 'pipeline';
-
-export type AgentStatus = 'ok' | 'erro';
+import type { AgentType, AgentStatus } from '../../types/agent';
 
 @Entity({ name: 'agent_runs' })
 export class AgentRun {
